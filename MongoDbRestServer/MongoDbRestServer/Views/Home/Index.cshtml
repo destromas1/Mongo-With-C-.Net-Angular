@@ -1,0 +1,57 @@
+﻿<div id="body" ng-app="app">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+
+    <script language="javascript" type="text/javascript">
+
+        var app = angular.module('app', []).run(['$rootScope', function ($rootScope) {
+            console.log('Mongo Client app running...');
+        }]);
+
+        app.controller('MongoCtrl', ['$scope', '$http', function ($scope, $http) {
+
+            $scope.person = {
+                Name: ''
+            };
+
+            var getData = function() {
+                $http({ method: "GET", url: "/api/dataaccess" }).
+                    success(function(data, status) {
+                        $scope.list = data;
+                    }).
+                    error(function(data, status) {
+                        alert("Error" + data);
+                    });
+            };
+
+            getData();
+
+            $scope.savePerson = function () {
+                $http.post('/api/dataaccess', $scope.person).success(function() {
+                    $scope.person.Name = '';
+                    getData();
+                });
+            };
+        }]);
+
+    </script>
+    
+    <section class="content-wrapper main-content clear-fix">
+        
+        <div ng-controller="MongoCtrl">
+
+            <input type="text" ng-model="person.Name" placeholder="Enter a Person here">
+            <hr>
+            <h3>Hello {{person.Name}}!</h3>
+
+            <input type="button" ng-click="savePerson()" value="Save Person!" />
+            <hr>
+            <table>
+                <tr ng-repeat="item in list">
+                    <td>{{item.Name}}</td>
+                </tr>
+            </table>
+
+        </div>
+    </section>
+</div>
